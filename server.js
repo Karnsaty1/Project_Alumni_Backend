@@ -3,11 +3,20 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 
 const allowedOrigins = [
-  'https://project-alumni-wczs.vercel.app', // Your Vercel frontend URL
-  'http://localhost:3000' // For local development
+  'https://project-alumni-wczs.vercel.app', 
+  'http://localhost:3000' 
 ];
+
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'", "https://vercel.live"], //
+    scriptSrc: ["'self'", "https://vercel.live", "https://project-alumni-wczs.vercel.app"], // Allow scripts from your frontend and Vercel
+    
+  },
+}));
 
 
 app.use(cors({
