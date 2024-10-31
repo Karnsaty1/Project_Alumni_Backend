@@ -4,12 +4,29 @@ const cors = require('cors');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 
-// CORS configuration
-app.use(cors({ origin: process.env.FRONTEND_URL })); 
+const allowedOrigins = [
+  'https://project-alumni-wczs.vercel.app', // Your Vercel frontend URL
+  'http://localhost:3000' // For local development
+];
+
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin, like mobile apps or curl requests
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, origin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
+
+
+// app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' })); 
 app.use(express.json());
 app.use(cookieParser());
 
-// Database connection
+
 const { connectDB } = require('./db');
 (async () => {
   try {
