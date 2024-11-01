@@ -6,14 +6,13 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
 const allowedOrigins = [
-  'https://project-alumni-wczs.vercel.app', 
-  'http://localhost:3000' 
+ '*'
 ];
 
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    defaultSrc: ["'self'", "https://vercel.live"], //
-    scriptSrc: ["'self'", "https://vercel.live", "https://project-alumni-wczs.vercel.app"], // Allow scripts from your frontend and Vercel
+    defaultSrc: ["'self'", "https://vercel.live"],
+    scriptSrc: ["'self'", "https://vercel.live", "https://project-alumni-wczs.vercel.app"], 
     
   },
 }));
