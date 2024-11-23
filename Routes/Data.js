@@ -3,8 +3,6 @@ const Router = express.Router();
 const { getDb } = require('../db');
 const jwt = require('jsonwebtoken');
 const { Collection } = require('mongodb');
-const multer=require('multer');
-
 require('dotenv').config();
 const SecretKey = process.env.SECURITY_KEY;
 
@@ -50,7 +48,7 @@ Router.post('/addOne', async (req, res) => {
 
         const { jobTitle, description, jobType, postedAt,Location, requirement,companyName} = req.body;
         const document = { jobTitle, description, jobType, postedAt,Location, requirement,companyName};
-        const userCollection = getDb('request_postings');
+        const userCollection = getDb('postings');
         const result = await userCollection.insertOne(document);
         if (result.acknowledged) {
             return res.status(201).json({
@@ -76,7 +74,7 @@ Router.get('/fetchPost', async (req, res) => {
 
         verifyToken(token);
 
-        const userCollection = getDb('postings');
+        const userCollection = getDb('request_postings');
         const posts = await userCollection.find().toArray();
         if (posts.length === 0) return res.status(404).send("No posts found");
         return res.status(200).json(posts);
@@ -153,44 +151,6 @@ Router.get('/success',async (req,res)=>{
    }
 });
 
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/'); 
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.originalname);
-    }
-  });
-  
-  const upload = multer({ storage: storage });
-
-Router.post('/addStory', upload.single('image') ,async (req,res)=>{
-     try{
-        const token=req.headers['authorization']?.split(' ')[1];
-        if(!token) res.status(400).json({msg:'Token Not Found !!! '});
-        verifyToken(token);
-        const {name, description}=req.body;
-        const image = req.file;
-        const collection=getDb('request_stories');  
-        await collection.insertOne({
-            name,
-            description,
-            imagePath: image.path,  
-            imageOriginalName: image.originalname,  
-            createdAt: new Date()
-          }); 
-          
-          res.status(200).json({ msg: 'Story added successfully!' });
-
-     }
-     catch(err){
-        res.status(500).json({ msg: 'Error adding story', error: err.message });
-     }
-})
-
-
 Router.get('/verifyToken',async(req,res)=>{
     const token=req.headers['authorization'].split(' ')[1];
     res.status(401).json({ error: 'Invalid Token' });
@@ -200,3 +160,4 @@ Router.get('/verifyToken',async(req,res)=>{
 })
 
 module.exports = Router;
+
