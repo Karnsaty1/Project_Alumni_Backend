@@ -4,9 +4,21 @@ const cors = require('cors');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 
+const helmet = require('helmet'); 
+
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"], 
+    scriptSrc: ["'self'", 'https://vercel.live'], 
+    connectSrc: ["'self'", 'https://vercel.live'], 
+    
+  },
+}));
+
+
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://project-alumni-4ly1w7cc4-satyam-karns-projects.vercel.app'],
+  origin: ['http://localhost:3000', 'https://project-alumni.vercel.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
