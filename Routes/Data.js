@@ -12,7 +12,7 @@ const verifyToken = (token) => {
         console.log(token)
         return jwt.verify(token, SecretKey);
     } catch (error) {
-        if (error.name === 'JsonWebTokenError') throw new Error('Invalid Token');
+        if (error.name === 'JsonWebTokenError') throw new Error('Invalid Token'+error);
         if (error.name === 'TokenExpiredError') throw new Error('Token Expired');
         throw new Error('Internal Server Error');
     }
@@ -71,9 +71,7 @@ Router.get('/fetchPost', async (req, res) => {
         const token = req.headers['authorization']?.split(' ')[1];
         console.log(token);
         if (!token) return res.status(400).json({ 'error': 'Token Not Found !!!' });
-
         verifyToken(token);
-
         const userCollection = getDb('request_postings');
         const posts = await userCollection.find().toArray();
         if (posts.length === 0) return res.status(404).send("No posts found");
@@ -138,7 +136,8 @@ Router.get('/events', async (req, res) => {
 
 Router.get('/success',async (req,res)=>{
    try {
-    const token =req.headers['authorization']?.split(' ')[1];
+    // const token =req.headers['authorization']?.split(' ')[1];
+    const token = req.cookies['authToken'];
     if(!token) res.status(400).json({msg:'Token Not Found !!! '});
     verifyToken(token);
 
@@ -160,4 +159,3 @@ Router.get('/verifyToken',async(req,res)=>{
 })
 
 module.exports = Router;
-
