@@ -8,7 +8,7 @@ const port = 8080;
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [process.env.FRONTEND_URL , 'http://localhost:3000','https://project-alumni-4ly1w7cc4-satyam-karns-projects.vercel.app']
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
