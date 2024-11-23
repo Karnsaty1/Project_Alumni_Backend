@@ -3,61 +3,37 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
 
-const allowedOrigins = [
- '*'
-];
+const port = 8080;
 
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'", "https://vercel.live"],
-    scriptSrc: ["'self'", "https://vercel.live", "https://project-alumni-wczs.vercel.app"], 
-    
-  },
-}));
+// CORS configuration
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
 
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin, like mobile apps or curl requests
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, origin);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
-
-
-// app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' })); 
 app.use(express.json());
 app.use(cookieParser());
 
-
 const { connectDB } = require('./db');
+
 (async () => {
   try {
     await connectDB();
-
-    // Root route
-    app.get('/', (req, res) => {
-      res.send('Welcome to the API');
-    });
-
     app.use('/user/auth', require('./Routes/Auth'));
     app.use('/user/data', require('./Routes/Data'));
-
+    app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+    });
   } catch (error) {
     console.error('Error starting server:', error);
   }
 })();
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
