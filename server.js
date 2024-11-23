@@ -8,7 +8,7 @@ const port = 8080;
 
 // CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000','https://project-alumni-n35bh0723-satyam-karns-projects.vercel.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
